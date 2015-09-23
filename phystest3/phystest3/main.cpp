@@ -255,10 +255,10 @@ void InitPhysX()
 							gScene->addActor(*sphere);
 */
 	
-		int numberofblocks=100;
+		int numberofblocks=10;
 		//PxVec3 offset = PxVec3(0,0,-1);
 		PxReal radius=1;
-		PxReal height=1;
+		PxReal height=10;
 		PxVec3 offset0 = PxVec3(-height,0,0);
 		PxVec3 offset1 = PxVec3(height,0,0);
 		PxVec3 initpos = PxVec3(10.0f, 100.0f, -70.0f);
@@ -285,6 +285,12 @@ void InitPhysX()
 			//add some limits to the joint
 			//joint->setLimitCone(PxJointLimitCone(0.00000001f,0.00000001f,0.1f));
 			//joint->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED,true);
+			joint->setSwingLimit(PxJointLimitCone(1.57f,1.57f,0.00000001f));
+			joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+			joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+			joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
+			joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
+			//joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE); //free to rotate around y axis
 
 			gBoxOri=gBox;
 			cout<< i <<"\n";
@@ -292,7 +298,7 @@ void InitPhysX()
 	
 		//Creating a rigid dynamic box resting on static plane 																 
 		PxTransform		boxPos(PxVec3(10.0f, 2.0f, 0.0f));											
-		PxBoxGeometry	boxGeometry(PxVec3(3.0f,2.0f,3.0f));										
+		PxBoxGeometry	boxGeometry(PxVec3(30.0f,2.0f,30.0f));										
 		PxRigidDynamic* box2 = PxCreateDynamic(*gPhysicsSDK, boxPos, boxGeometry, *material, 1.0f);		
 						gScene->addActor(*box2);
 	}

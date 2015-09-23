@@ -1,7 +1,7 @@
-﻿La génération a démarré 22/09/2015 14:04:53.
+﻿La génération a démarré 23/09/2015 15:34:02.
      1>Projet "G:\Hua\toto\phystest3\phystest3\phystest3\phystest3.vcxproj" sur le nœud 2 (build cible(s)).
      1>InitializeBuildStatus:
-         Création de "Debug\phystest3.unsuccessfulbuild", car "AlwaysCreate" a été spécifié.
+         Mise à jour de l'horodatage "Debug\phystest3.unsuccessfulbuild".
        ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
@@ -30,4 +30,4 @@
 
 La génération a réussi.
 
-Temps écoulé 00:00:02.71
+Temps écoulé 00:00:02.76
