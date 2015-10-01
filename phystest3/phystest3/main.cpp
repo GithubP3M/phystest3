@@ -85,6 +85,7 @@ static SimulationEvents gSimulationEventCallback;			//Instance of 'SimulationEve
 void InitPhysX();		//Initialize the PhysX SDK and create actors. 
 void StepPhysX();		//Step PhysX simulation
 void ShutdownPhysX();	//Shutdown PhysX SDK
+void countActor(); //Count the actors
 
 
 
@@ -121,26 +122,7 @@ PxFilterFlags customFilterShader(PxFilterObjectAttributes attributes0, PxFilterD
 		pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 		return PxFilterFlag::eDEFAULT;
 }
-/*{//insert awesome filters here
-       // let triggers through
-        if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
-        {
-                pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
-                return PxFilterFlag::eDEFAULT;
-        }
-        // generate contacts for all that were not filtered above
-        pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 
-		pairFlags = PxPairFlag::eCONTACT_DEFAULT;
-
-        // trigger the contact callback for pairs (A,B) where
-        // the filtermask of A contains the ID of B and vice versa.
-        if((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
-                pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
-
-        return PxFilterFlag::eDEFAULT;
-		//return PxFilterFlag::eKILL;
-}*/
 
 
 void main(int argc, char** argv) 
@@ -150,9 +132,11 @@ void main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);		//Enable double buffering
 	glutInitWindowSize(gWindowWidth, gWindowHeight);	//Set window's initial width & height
 	
-	glutCreateWindow("Learning Physics Modeling with PhysX (ISBN: 978-1-84969-814-6) Examples"); // Create a window with the given title
+	glutCreateWindow("titotatetu"); // Create a window with the given title
 
 	InitPhysX();
+	countActor();
+
 
 	glutDisplayFunc(OnRender);	//Display callback for the current glut window
 	glutIdleFunc(OnIdle);		//Called whenever the application is idle
@@ -164,9 +148,6 @@ void main(int argc, char** argv)
 	glutMainLoop();				//Enter the event-processing loop
 	atexit(OnShutdown);			//Called on application exit 
 }
-
-
-
 
 
 void InitPhysX() 
@@ -255,10 +236,10 @@ void InitPhysX()
 							gScene->addActor(*sphere);
 */
 	
-		int numberofblocks=10;
+		int numberofblocks=500;
 		//PxVec3 offset = PxVec3(0,0,-1);
 		PxReal radius=1;
-		PxReal height=10;
+		PxReal height=1;
 		PxVec3 offset0 = PxVec3(-height,0,0);
 		PxVec3 offset1 = PxVec3(height,0,0);
 		PxVec3 initpos = PxVec3(10.0f, 100.0f, -70.0f);
@@ -293,19 +274,63 @@ void InitPhysX()
 			//joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE); //free to rotate around y axis
 
 			gBoxOri=gBox;
-			cout<< i <<"\n";
+			//cout<< i <<"\n";
 		}
-	
 		//Creating a rigid dynamic box resting on static plane 																 
 		PxTransform		boxPos(PxVec3(10.0f, 2.0f, 0.0f));											
 		PxBoxGeometry	boxGeometry(PxVec3(30.0f,2.0f,30.0f));										
 		PxRigidDynamic* box2 = PxCreateDynamic(*gPhysicsSDK, boxPos, boxGeometry, *material, 1.0f);		
 						gScene->addActor(*box2);
 	}
-
-	
-
 }
+
+//define langevin
+
+void countActor(void)
+{
+    PxU32 nbActors = gScene->getNbActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC);
+    //PxActor** actors = gScene->getActors();
+ 
+    while(nbActors--)
+    {
+		cout<<nbActors<<"_";
+    }
+}
+
+	//int n = gScene->getNbActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC);
+	//vector<physx::PxActor*> buffer(n);
+	//gScene->getActors(t, buffer.data(), n);
+
+    //int nbActors = gScene->getNbActors(PxActorTypeSelectionFlag::eRIGID_DYNAMIC); 
+	//gScene->getNbActors(PxActorTypeSelectionFlag::eRIGID_DYNAMIC); 
+    //PxActor** actors = gScene->getActors(); 
+
+	//PxU32 count = gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
+	//PxActor** buffer = new PxActor*[count];
+	//getActiveScene().getActors(PxActorTypeFlag::eRIGID_STATIC | PxActorTypeFlag::eRIGID_DYNAMIC, buffer, count);
+
+	//unsigned int uiNumActors = gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
+
+
+
+PxVec3 langevin(int body=1,int sigma=1,int friction=1)
+{
+	
+	return(PxVec3(0.1f,0.1f,0.1f));
+}
+
+/*python langevin
+#Arg1: corps, arg2: sigma, arg3: friction
+def langevin_tr(arg1,arg2,arg3):
+	argvb=arg1.getLinearVel()
+	"""argfx=gauss(0.,arg2)-arg3*argvb[0]
+	argfy=gauss(0.,arg2)-arg3*argvb[1]
+	argfz=gauss(0.,arg2)-arg3*argvb[2]"""
+	argfx=2.*arg2*(.5-random())-arg3*argvb[0]
+	argfy=2.*arg2*(.5-random())-arg3*argvb[1]
+	argfz=2.*arg2*(.5-random())-arg3*argvb[2]
+	arg1.addForce((argfx,argfy,argfz))
+*/
 
 
 void StepPhysX()					//Stepping PhysX
