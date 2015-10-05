@@ -54,6 +54,7 @@ using namespace physx;
 int gWindowWidth  = 800; //Screen width
 int gWindowHeight = 600; //Screen height
 
+float pi = 3.14159265358979323846;
 
 //---Scene navigation----
 int gOldMouseX = 0;
@@ -135,9 +136,7 @@ void main(int argc, char** argv)
 	glutCreateWindow("titotatetu"); // Create a window with the given title
 
 	InitPhysX();
-	countActor();
-
-
+	
 	glutDisplayFunc(OnRender);	//Display callback for the current glut window
 	glutIdleFunc(OnIdle);		//Called whenever the application is idle
 	glutReshapeFunc(OnReshape); //Called whenever the app window is resized
@@ -236,7 +235,7 @@ void InitPhysX()
 							gScene->addActor(*sphere);
 */
 	
-		int numberofblocks=500;
+		int numberofblocks=100;
 		//PxVec3 offset = PxVec3(0,0,-1);
 		PxReal radius=1;
 		PxReal height=1;
@@ -289,43 +288,36 @@ void InitPhysX()
 void countActor(void)
 {
     PxU32 nbActors = gScene->getNbActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC);
-    //PxActor** actors = gScene->getActors();
+	PxActor** actors = new PxActor*[nbActors];
+	gScene->getActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC,actors,nbActors);
  
-    while(nbActors--)
+	/*
+	while(nbActors--)
     {
-		cout<<nbActors<<"_";
+		cout<<"nb"<<nbActors<<"_"<<"actor"<<actors<<"\n";
     }
+	*/
+	/*
+	for(int init=0 ; init<=nbActors ; init++)
+	{
+		cout<<"actor"<<actors[init]<<"\n";
+	}
+	*/
 }
 
-	//int n = gScene->getNbActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC);
-	//vector<physx::PxActor*> buffer(n);
-	//gScene->getActors(t, buffer.data(), n);
+/*float viscosity=viscosity=6.6e-3; /// nucleoplasme change for other medium !
+float friction=6.*pi*viscosity*20.*pow(10.,-9.);
 
-    //int nbActors = gScene->getNbActors(PxActorTypeSelectionFlag::eRIGID_DYNAMIC); 
-	//gScene->getNbActors(PxActorTypeSelectionFlag::eRIGID_DYNAMIC); 
-    //PxActor** actors = gScene->getActors(); 
-
-	//PxU32 count = gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
-	//PxActor** buffer = new PxActor*[count];
-	//getActiveScene().getActors(PxActorTypeFlag::eRIGID_STATIC | PxActorTypeFlag::eRIGID_DYNAMIC, buffer, count);
-
-	//unsigned int uiNumActors = gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
-
-
-
-PxVec3 langevin(int body=1,int sigma=1,int friction=1)
+PxVec3 langevin(simactor,float sigma,float friction)
 {
-	
+	argvb=simactor.getLinearVelocity
 	return(PxVec3(0.1f,0.1f,0.1f));
-}
+}*/
 
 /*python langevin
 #Arg1: corps, arg2: sigma, arg3: friction
 def langevin_tr(arg1,arg2,arg3):
 	argvb=arg1.getLinearVel()
-	"""argfx=gauss(0.,arg2)-arg3*argvb[0]
-	argfy=gauss(0.,arg2)-arg3*argvb[1]
-	argfz=gauss(0.,arg2)-arg3*argvb[2]"""
 	argfx=2.*arg2*(.5-random())-arg3*argvb[0]
 	argfy=2.*arg2*(.5-random())-arg3*argvb[1]
 	argfz=2.*arg2*(.5-random())-arg3*argvb[2]
@@ -354,7 +346,8 @@ void OnRender()
 {
 	//Update PhysX	
 	if(gScene) 
-		StepPhysX(); 
+		StepPhysX();
+		countActor();
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
