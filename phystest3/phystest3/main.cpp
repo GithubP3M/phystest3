@@ -28,6 +28,7 @@ Description			: This example demonstrates how to use simulation event callbacks 
 #include <iostream> 
 #include <PxPhysicsAPI.h> //Single header file to include all features of PhysX API 
 #include <GL/freeglut.h>  //OpenGL window tool kit 
+#include <vector>
 
 #include "RenderBuffer.h"	  //Used for rendering PhysX objetcs 
 #include "SimulationEvents.h" //Used for receiving simulation events
@@ -97,6 +98,9 @@ void OnReshape(int, int);			//Called whenever the application window is resized
 void OnShutdown();					//Called on application exit
 void OnMouseMotion(int,int);		//Called when the mouse is moving
 void OnMousePress(int,int,int,int); //Called when any mouse button is pressed
+
+//create a vector to store the bodies?
+vector <PxRigidBody*> arrayofBodies;
 
 /* commented so I can test my very own version
 //Defining a custome filter shader 
@@ -237,11 +241,14 @@ void InitPhysX()
 	
 		int numberofblocks=100;
 		//PxVec3 offset = PxVec3(0,0,-1);
+
 		PxReal radius=1;
 		PxReal height=1;
 		PxVec3 offset0 = PxVec3(-height,0,0);
 		PxVec3 offset1 = PxVec3(height,0,0);
 		PxVec3 initpos = PxVec3(10.0f, 100.0f, -70.0f);
+
+
 
 		PxTransform		boxPos1(initpos,PxQuat(PxHalfPi, PxVec3(0.0f, 1.0f, 0.0f)));	//Position and orientation(transform) for box actor 
 		PxRigidDynamic	*gBoxOri = NULL;				//Instance of box actor 
@@ -272,6 +279,9 @@ void InitPhysX()
 			joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
 			//joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE); //free to rotate around y axis
 
+			//add the body to the array before renaming the original box...
+			arrayofBodies.push_back(gBox);
+
 			gBoxOri=gBox;
 			//cout<< i <<"\n";
 		}
@@ -291,21 +301,35 @@ void countActor(void)
 	PxActor** actors = new PxActor*[nbActors];
 	gScene->getActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC,actors,nbActors);
  
-	/*
+	cout<<arrayofBodies[1];
+
+	arrayofBodies[1]->addForce(PxVec3(0,800,0),PxForceMode::eACCELERATION);
+
 	while(nbActors--)
+	{
+		//arrayofBodies[nbActors];
+	}
+
+	/*while(nbActors--)
     {
 		cout<<"nb"<<nbActors<<"_"<<"actor"<<actors<<"\n";
-    }
-	*/
-	/*
-	for(int init=0 ; init<=nbActors ; init++)
+		actors[nbActors]->isRigidDynamic;  //addForce(PxVec3(1,1,1));
+		
+    }*/
+	
+	/*for(int init=0 ; init<=nbActors ; init++)
 	{
-		cout<<"actor"<<actors[init]<<"\n";
-	}
-	*/
+		auto rigidBody = dynamic_cast<PxRigidBody*>(actors[init]);
+		if (rigidBody)
+		{
+			rigidBody->addForce(PxVec3(1,1,1));
+		}
+	}*/
 }
 
-/*float viscosity=viscosity=6.6e-3; /// nucleoplasme change for other medium !
+
+/*
+float viscosity=viscosity=6.6e-3; /// nucleoplasme change for other medium !
 float friction=6.*pi*viscosity*20.*pow(10.,-9.);
 
 PxVec3 langevin(simactor,float sigma,float friction)
