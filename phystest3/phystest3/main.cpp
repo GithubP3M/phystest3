@@ -255,6 +255,7 @@ void InitPhysX()
 		PxCapsuleGeometry	sphereGeometry(radius,height);											//Defining geometry for box actor
 		gBoxOri = PxCreateDynamic(*gPhysicsSDK, boxPos1, sphereGeometry, *material, 1.0f);		//Creating rigid static actor
 		gScene->addActor(*gBoxOri);														//Adding box actor to PhysX scene
+		arrayofBodies.push_back(gBoxOri);
 
 		for (PxU32 i=1; i<numberofblocks; i++)
 		{
@@ -297,17 +298,23 @@ void InitPhysX()
 
 void countActor(void)
 {
-    PxU32 nbActors = gScene->getNbActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC);
-	PxActor** actors = new PxActor*[nbActors];
-	gScene->getActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC,actors,nbActors);
+    //PxU32 nbActors = gScene->getNbActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC);
+	//PxActor** actors = new PxActor*[nbActors];
+	//gScene->getActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC,actors,nbActors);
  
-	cout<<arrayofBodies[1];
+	int nbActors=arrayofBodies.size();
 
-	arrayofBodies[1]->addForce(PxVec3(0,800,0),PxForceMode::eACCELERATION);
+	//arrayofBodies[1]->addForce(PxVec3(0,800,0),PxForceMode::eACCELERATION);
 
 	while(nbActors--)
 	{
+		int fx=rand()%1000;
+		int fy=rand()%1000;
+		int fz=rand()%1000;
+		
+		//cout<<fx<<"_"<<fy<<"_"<<fz<<"\n";
 		//arrayofBodies[nbActors];
+		arrayofBodies[nbActors]->addForce(PxVec3(fx,fy,fz),PxForceMode::eFORCE);
 	}
 
 	/*while(nbActors--)
