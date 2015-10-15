@@ -1,15 +1,21 @@
-﻿La génération a démarré 14/10/2015 14:07:48.
+﻿La génération a démarré 15/10/2015 16:45:07.
      1>Projet "G:\Hua\toto\phystest3\phystest3\phystest3\phystest3.vcxproj" sur le nœud 2 (build cible(s)).
      1>InitializeBuildStatus:
          Création de "Debug\phystest3.unsuccessfulbuild", car "AlwaysCreate" a été spécifié.
        ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(58): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(260): warning C4018: '<' : incompatibilité signed/unsigned
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(317): warning C4244: 'argument' : conversion de 'int' en 'physx::PxReal', perte possible de données
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(317): warning C4244: 'argument' : conversion de 'int' en 'physx::PxReal', perte possible de données
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(317): warning C4244: 'argument' : conversion de 'int' en 'physx::PxReal', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(59): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(61): warning C4305: '=' : troncation de 'double' à 'float'
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(62): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(63): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(66): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(67): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(68): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(270): warning C4018: '<' : incompatibilité signed/unsigned
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(315): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(316): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(317): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"G:\Hua\toto\phystest3\phystest3\Debug\phystest3.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\phystest3.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"G:\Hua\toto\phystest3\phystest3\Debug\phystest3.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"G:\Hua\toto\phystest3\phystest3\Debug\phystest3.lib" /MACHINE:X86 Debug\main.obj
          LINK : G:\Hua\toto\phystest3\phystest3\Debug\phystest3.exe introuvable ou non généré par la dernière édition de liens incrémentielle ; édition de liens complète en cours
@@ -33,4 +39,4 @@
 
 La génération a réussi.
 
-Temps écoulé 00:00:03.12
+Temps écoulé 00:00:03.05

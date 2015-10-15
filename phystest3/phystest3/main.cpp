@@ -29,6 +29,7 @@ Description			: This example demonstrates how to use simulation event callbacks 
 #include <PxPhysicsAPI.h> //Single header file to include all features of PhysX API 
 #include <GL/freeglut.h>  //OpenGL window tool kit 
 #include <vector>
+#include <math.h>
 
 #include "RenderBuffer.h"	  //Used for rendering PhysX objetcs 
 #include "SimulationEvents.h" //Used for receiving simulation events
@@ -56,6 +57,15 @@ int gWindowWidth  = 800; //Screen width
 int gWindowHeight = 600; //Screen height
 
 float pi = 3.14159265358979323846;
+//physics parameters
+float viscosity=viscosity=6.6e-3; /// nucleoplasme change for other medium
+float friction=6.*pi*viscosity*20.*pow(10.,-9.);
+float Ma=(13e6*1.7*pow(10.,-27.))/2.;
+float TempsFriction=Ma/friction;
+float dt=TempsFriction;
+float kB=1.38*pow(10.,-23.);
+float temp=31000000000000000.;
+float sigma=1000.*sqrt(2.*friction*kB*temp/dt);
 
 //---Scene navigation----
 int gOldMouseX = 0;
@@ -172,8 +182,8 @@ void InitPhysX()
 	//Creating scene
 	PxSceneDesc sceneDesc(gPhysicsSDK->getTolerancesScale());		//Descriptor class for scenes 
 
-	sceneDesc.gravity		= PxVec3(0.0f, -9.8f, 0.0f);			//Setting gravity
-	//sceneDesc.gravity		= PxVec3(0.0f, 0.0f, 0.0f);			//Setting gravity
+	//sceneDesc.gravity		= PxVec3(0.0f, -9.8f, 0.0f);			//Setting gravity
+	sceneDesc.gravity		= PxVec3(0.0f, 0.0f, 0.0f);			//Setting gravity
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(1);		//Creates default CPU dispatcher for the scene
 	
 	sceneDesc.filterShader  = customFilterShader;					//Creates custom user collision filter shader for the scene
@@ -295,6 +305,28 @@ void InitPhysX()
 }
 
 //define langevin
+PxVec3 Langevin(PxVec3 LinVel,float sigma,float friction)
+{
+	
+	float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	float r3 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+	float argfx=2.*sigma*(.5-r1)-friction*LinVel[0];
+	float argfy=2.*sigma*(.5-r2)-friction*LinVel[1];
+	float argfz=2.*sigma*(.5-r3)-friction*LinVel[2];
+	return (PxVec3(argfx,argfy,argfz));
+}
+
+/*python langevin
+#Arg1: corps, arg2: sigma, arg3: friction
+def langevin_tr(arg1,arg2,arg3):
+	argvb=arg1.getLinearVel()
+	argfx=2.*arg2*(.5-random())-arg3*argvb[0]
+	argfy=2.*arg2*(.5-random())-arg3*argvb[1]
+	argfz=2.*arg2*(.5-random())-arg3*argvb[2]
+	arg1.addForce((argfx,argfy,argfz))
+*/
 
 void countActor(void)
 {
@@ -308,53 +340,20 @@ void countActor(void)
 
 	while(nbActors--)
 	{
-		int fx=rand()%1000;
-		int fy=rand()%1000;
-		int fz=rand()%1000;
+		//int fx=rand()%50;
+		//int fy=rand()%50;
+		//int fz=rand()%50;
 		
 		//cout<<fx<<"_"<<fy<<"_"<<fz<<"\n";
 		//arrayofBodies[nbActors];
-		arrayofBodies[nbActors]->addForce(PxVec3(fx,fy,fz),PxForceMode::eFORCE);
-	}
-
-	/*while(nbActors--)
-    {
-		cout<<"nb"<<nbActors<<"_"<<"actor"<<actors<<"\n";
-		actors[nbActors]->isRigidDynamic;  //addForce(PxVec3(1,1,1));
+		PxVec3 LinVel=arrayofBodies[nbActors]->getLinearVelocity();
+		//cout<<LinVel[0]<<"_"<<LinVel[1]<<""<<LinVel[2]<<"\n";
+		PxVec3 LForce=Langevin(LinVel,sigma,friction);
+		//cout<<LForce[0]<<"_"<<LForce[1]<<""<<LForce[2]<<"\n";
+		arrayofBodies[nbActors]->addForce(LForce,PxForceMode::eIMPULSE);
 		
-    }*/
-	
-	/*for(int init=0 ; init<=nbActors ; init++)
-	{
-		auto rigidBody = dynamic_cast<PxRigidBody*>(actors[init]);
-		if (rigidBody)
-		{
-			rigidBody->addForce(PxVec3(1,1,1));
-		}
-	}*/
+	}
 }
-
-
-/*
-float viscosity=viscosity=6.6e-3; /// nucleoplasme change for other medium !
-float friction=6.*pi*viscosity*20.*pow(10.,-9.);
-
-PxVec3 langevin(simactor,float sigma,float friction)
-{
-	argvb=simactor.getLinearVelocity
-	return(PxVec3(0.1f,0.1f,0.1f));
-}*/
-
-/*python langevin
-#Arg1: corps, arg2: sigma, arg3: friction
-def langevin_tr(arg1,arg2,arg3):
-	argvb=arg1.getLinearVel()
-	argfx=2.*arg2*(.5-random())-arg3*argvb[0]
-	argfy=2.*arg2*(.5-random())-arg3*argvb[1]
-	argfz=2.*arg2*(.5-random())-arg3*argvb[2]
-	arg1.addForce((argfx,argfy,argfz))
-*/
-
 
 void StepPhysX()					//Stepping PhysX
 { 
