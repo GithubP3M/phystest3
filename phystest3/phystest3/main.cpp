@@ -26,10 +26,11 @@ Description			: This example demonstrates how to use simulation event callbacks 
 
 
 #include <iostream> 
-#include <PxPhysicsAPI.h> //Single header file to include all features of PhysX API 
+#include <PxPhysicsAPI.h> //Single header file to include all features of PhysX API
 #include <GL/freeglut.h>  //OpenGL window tool kit 
 #include <vector>
 #include <math.h>
+
 
 #include "RenderBuffer.h"	  //Used for rendering PhysX objetcs 
 #include "SimulationEvents.h" //Used for receiving simulation events
@@ -40,11 +41,13 @@ Description			: This example demonstrates how to use simulation event callbacks 
 #pragma comment(lib, "PhysX3DEBUG_x86.lib")				//Always be needed  
 #pragma comment(lib, "PhysX3CommonDEBUG_x86.lib")		//Always be needed
 #pragma comment(lib, "PhysX3ExtensionsDEBUG.lib")		//PhysX extended library 
+#pragma comment(lib, "PxTaskDEBUG.lib")
 
 #else //Else load libraries for 'Release' mode
 #pragma comment(lib, "PhysX3_x86.lib")	
 #pragma comment(lib, "PhysX3Common_x86.lib") 
 #pragma comment(lib, "PhysX3Extensions.lib")
+#pragma comment(lib, "PxTask.lib")
 #endif
 
 using namespace std;
@@ -56,16 +59,37 @@ using namespace physx;
 int gWindowWidth  = 800; //Screen width
 int gWindowHeight = 600; //Screen height
 
-float pi = 3.14159265358979323846;
+/* backup values in case it goes wrong
+//float scale=9e4;
+double pi = 3.14159265358979323846;
 //physics parameters
-float viscosity=viscosity=6.6e-3; /// nucleoplasme change for other medium
-float friction=6.*pi*viscosity*20.*pow(10.,-9.);
-float Ma=(13e6*1.7*pow(10.,-27.))/2.;
-float TempsFriction=Ma/friction;
-float dt=TempsFriction;
-float kB=1.38*pow(10.,-23.);
-float temp=31000000000000000.;
-float sigma=1000.*sqrt(2.*friction*kB*temp/dt);
+//float viscosity=6.6e-3; /// nucleoplasme change for other medium
+double viscosity=6.6e-3; /// nucleoplasme change for other medium (in N.nm-2
+double friction=6.*pi*viscosity*20;
+//PxReal Ma=(13e6*1.7*pow(10.,-27.))/2.;
+//PxReal Ma=(13e6*1.7e-27)/2.;
+PxReal Ma=10;
+double TempsFriction=Ma/friction;
+double dt=TempsFriction;
+//float kB=1.38*pow(10.,-23.);
+double kB=1.38e-5; //in nm2 kg s-2 K-1)
+double temp=3100.;
+double sigma=1.*sqrt(2.*friction*kB*temp/dt);
+*/
+
+double pi = 3.141592653589793;
+//physics parameters
+double viscosity=6.6e-3; /// nucleoplasme change for other medium (in N.nm-2)
+double friction=6.*pi*viscosity*20;
+//PxReal Ma=(13e6*1.7*pow(10.,-27.))/2.;
+//PxReal Ma=(13e6*1.7e-27)/2.;
+PxReal Ma=10;
+double TempsFriction=Ma/friction;
+double dt=TempsFriction;
+//float kB=1.38*pow(10.,-23.);
+double kB=1.38e-5; //in nm2 kg s-2 K-1)
+double temp=3100.;
+double sigma=1.*sqrt(2.*friction*kB*temp/dt);
 
 //---Scene navigation----
 int gOldMouseX = 0;
@@ -74,9 +98,9 @@ int gOldMouseY = 0;
 bool isMouseLeftBtnDown  = false;
 bool isMouseRightBtnDown = false;
 
-float gCamRoateX	= 15; 
-float gCamRoateY	= 0;
-float gCamDistance	= -30;
+float gCamRoateX	= 90; 
+float gCamRoateY	= 90;
+float gCamDistance	= -180;
 //------------------------
 
 
@@ -85,7 +109,8 @@ static PxFoundation*			gFoundation = NULL;			//Instance of singleton foundation 
 static PxDefaultErrorCallback	gDefaultErrorCallback;		//Instance of default implementation of the error callback
 static PxDefaultAllocator		gDefaultAllocatorCallback;	//Instance of default implementation of the allocator interface required by the SDK
 PxScene*						gScene = NULL;				//Instance of PhysX Scene				
-PxReal							gTimeStep = 1.0f/60.0f;		//Time-step value for PhysX simulation 
+//PxReal							gTimeStep = 1.0f/60.0f;		//Time-step value for PhysX simulation 
+PxReal							gTimeStep = dt;		//Time-step value for PhysX simulation 
 
 static SimulationEvents gSimulationEventCallback;			//Instance of 'SimulationEvents' class inherited from 'PxSimulationEventCallback' class
 
@@ -165,6 +190,10 @@ void main(int argc, char** argv)
 
 void InitPhysX() 
 {
+	cout<<"mass "<<Ma<<"\n";
+	cout<<"friction "<<friction<<"\n";
+	cout<<"dt "<<TempsFriction<<"\n";
+	
 	//Creating foundation for PhysX
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
 	
@@ -177,7 +206,8 @@ void InitPhysX()
 		exit(1);
 	}
 
-
+	
+		
 
 	//Creating scene
 	PxSceneDesc sceneDesc(gPhysicsSDK->getTolerancesScale());		//Descriptor class for scenes 
@@ -185,6 +215,15 @@ void InitPhysX()
 	//sceneDesc.gravity		= PxVec3(0.0f, -9.8f, 0.0f);			//Setting gravity
 	sceneDesc.gravity		= PxVec3(0.0f, 0.0f, 0.0f);			//Setting gravity
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(1);		//Creates default CPU dispatcher for the scene
+
+	/*//testing GPU dispatcher
+	PxProfileZoneManager* profileZoneManager = &PxProfileZoneManager::createProfileZoneManager(gFoundation);
+	PxCudaContextManagerDesc cudaContextManagerDesc;
+	PxCudaContextManager* cudaContextManager = PxCreateCudaContextManager(*gFoundation,cudaContextManagerDesc,profileZoneManager);
+
+	sceneDesc.gpuDispatcher = cudaContextManager->getGpuDispatcher();
+	
+	//testing GPU dispatcher */
 	
 	sceneDesc.filterShader  = customFilterShader;					//Creates custom user collision filter shader for the scene
 	sceneDesc.simulationEventCallback = &gSimulationEventCallback;  //Resgistering for receiving simulation events
@@ -208,7 +247,7 @@ void InitPhysX()
 	
 	
 	//---------Creating actors-----------]
-	
+/*
 	//1-Creating static plane that will act as ground	 
 	PxTransform planePos =	PxTransform(PxVec3(0.0f),PxQuat(PxHalfPi, PxVec3(0.0f, 0.0f, 1.0f)));	//Position and orientation(transform) for plane actor  
 	PxRigidStatic* plane =  gPhysicsSDK->createRigidStatic(planePos);								//Creating rigid static actor	
@@ -235,20 +274,10 @@ void InitPhysX()
 		PxRigidStatic*	gBox = PxCreateStatic(*gPhysicsSDK, boxPos, *boxShape);
 						gScene->addActor(*gBox);														
 	}
-
+*/	
 
 		
 	{	
-		//Creating a rigid dynamic sphere (It will fall on to the other rigid dynamic body which will invoke 'onContact()' function)																			 
-/*		PxTransform			spherePos(PxVec3(10.0f, 10.0f, 0.0f));											
-		PxSphereGeometry	sphereGeometry(2);										
-		PxRigidDynamic*		sphere = PxCreateDynamic(*gPhysicsSDK, spherePos, sphereGeometry, *material, 1.0f);
-							
-							sphere->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true); //Set flag to enable CCD (Continuous Collision Detection) for the actor
-							
-							gScene->addActor(*sphere);
-*/
-	
 		int numberofblocks=100;
 		//PxVec3 offset = PxVec3(0,0,-1);
 
@@ -256,51 +285,84 @@ void InitPhysX()
 		PxReal height=1;
 		PxVec3 offset0 = PxVec3(-height,0,0);
 		PxVec3 offset1 = PxVec3(height,0,0);
-		PxVec3 initpos = PxVec3(10.0f, 100.0f, -70.0f);
+		PxVec3 initpos = PxVec3(0.0f, 0.0f, 0.0f);
 
 
 
 		PxTransform		boxPos1(initpos,PxQuat(PxHalfPi, PxVec3(0.0f, 1.0f, 0.0f)));	//Position and orientation(transform) for box actor 
 		PxRigidDynamic	*gBoxOri = NULL;				//Instance of box actor 
-		PxCapsuleGeometry	sphereGeometry(radius,height);											//Defining geometry for box actor
+		PxCapsuleGeometry	sphereGeometry(2*radius,0.5*height);											//Defining geometry for box actor
 		gBoxOri = PxCreateDynamic(*gPhysicsSDK, boxPos1, sphereGeometry, *material, 1.0f);		//Creating rigid static actor
+		gBoxOri->setMass(Ma);
 		gScene->addActor(*gBoxOri);														//Adding box actor to PhysX scene
 		arrayofBodies.push_back(gBoxOri);
 
 		for (PxU32 i=1; i<numberofblocks; i++)
 		{
-			PxTransform		boxPos1(initpos+PxVec3(0.0f, 0.0f, 2*i*height/*2.0f*/),PxQuat(PxHalfPi, PxVec3(0.0f, 1.0f, 0.0f)));												//Position and orientation(transform) for box actor 
-			PxRigidDynamic	*gBox = NULL;				//Instance of box actor 
-			PxCapsuleGeometry	sphereGeometry(radius,height);											//Defining geometry for box actor
-							gBox = PxCreateDynamic(*gPhysicsSDK, boxPos1, sphereGeometry, *material, 1.0f);		//Creating rigid static actor
-							gScene->addActor(*gBox);														//Adding box actor to PhysX scene
+			if (i<numberofblocks-1){
+				cout<<numberofblocks<<i<<"\n";
+				PxTransform		boxPos1(initpos+PxVec3(0.0f, 0.0f, 2*i*height/*2.0f*/),PxQuat(PxHalfPi, PxVec3(0.0f, 1.0f, 0.0f)));												//Position and orientation(transform) for box actor 
+				PxRigidDynamic	*gBox = NULL;				//Instance of box actor 
+				PxCapsuleGeometry	sphereGeometry(radius,height);											//Defining geometry for box actor
+								gBox = PxCreateDynamic(*gPhysicsSDK, boxPos1, sphereGeometry, *material, 1.0f);		//Creating rigid static actor
+								gBox->setMass(Ma);
+								gScene->addActor(*gBox);														//Adding box actor to PhysX scene
 
-							// adding some joint to the mix
-			//PxSphericalJoint* joint = PxSphericalJointCreate(*gPhysicsSDK, gBoxOri, PxTransform(-offset), gBox, PxTransform(offset));
+								// adding some joint to the mix
+					//PxSphericalJoint* joint = PxSphericalJointCreate(*gPhysicsSDK, gBoxOri, PxTransform(-offset), gBox, PxTransform(offset));
 			//PxSphericalJoint* joint = PxSphericalJointCreate(*gPhysicsSDK, gBoxOri, PxTransform(offset0), gBox, PxTransform(offset1)); //uncomment to use spherical joints
-			PxD6Joint* joint = PxD6JointCreate(*gPhysicsSDK, gBoxOri, PxTransform(offset0), gBox, PxTransform(offset1));
+				PxD6Joint* joint = PxD6JointCreate(*gPhysicsSDK, gBoxOri, PxTransform(offset0), gBox, PxTransform(offset1));
 
-			//add some limits to the joint
-			//joint->setLimitCone(PxJointLimitCone(0.00000001f,0.00000001f,0.1f));
-			//joint->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED,true);
-			joint->setSwingLimit(PxJointLimitCone(1.57f,1.57f,0.00000001f));
-			joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-			joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-			joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
-			joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
-			//joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE); //free to rotate around y axis
+				//add some limits to the joint
+				joint->setSwingLimit(PxJointLimitCone(1.57f,1.57f,0.1f));
+				joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+				joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+				joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
+				joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
+					//joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE); //free to rotate around y axis
 
 			//add the body to the array before renaming the original box...
-			arrayofBodies.push_back(gBox);
+				arrayofBodies.push_back(gBox);
 
-			gBoxOri=gBox;
+				gBoxOri=gBox;
+			}
+			if (i>=numberofblocks-1){
+				cout<<i<<"\n";
+				PxTransform		boxPos1(initpos+PxVec3(0.0f, 0.0f, 2*i*height/*2.0f*/),PxQuat(PxHalfPi, PxVec3(0.0f, 1.0f, 0.0f)));												//Position and orientation(transform) for box actor 
+				PxRigidDynamic	*gBox = NULL;				//Instance of box actor 
+				PxCapsuleGeometry	sphereGeometry(2*radius,0.5*height);											//Defining geometry for box actor
+								gBox = PxCreateDynamic(*gPhysicsSDK, boxPos1, sphereGeometry, *material, 1.0f);		//Creating rigid static actor
+								gBox->setMass(Ma);
+								gScene->addActor(*gBox);														//Adding box actor to PhysX scene
+
+								// adding some joint to the mix
+					//PxSphericalJoint* joint = PxSphericalJointCreate(*gPhysicsSDK, gBoxOri, PxTransform(-offset), gBox, PxTransform(offset));
+			//PxSphericalJoint* joint = PxSphericalJointCreate(*gPhysicsSDK, gBoxOri, PxTransform(offset0), gBox, PxTransform(offset1)); //uncomment to use spherical joints
+				PxD6Joint* joint = PxD6JointCreate(*gPhysicsSDK, gBoxOri, PxTransform(offset0), gBox, PxTransform(offset1));
+
+				//add some limits to the joint
+				joint->setSwingLimit(PxJointLimitCone(1.57f,1.57f,0.1f));
+				joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+				joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+				joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
+				joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
+					//joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE); //free to rotate around y axis
+
+			//add the body to the array before renaming the original box...
+				arrayofBodies.push_back(gBox);
+
+				gBoxOri=gBox;
+			}
 			//cout<< i <<"\n";
 		}
+		
 		//Creating a rigid dynamic box resting on static plane 																 
+/*
 		PxTransform		boxPos(PxVec3(10.0f, 2.0f, 0.0f));											
 		PxBoxGeometry	boxGeometry(PxVec3(30.0f,2.0f,30.0f));										
 		PxRigidDynamic* box2 = PxCreateDynamic(*gPhysicsSDK, boxPos, boxGeometry, *material, 1.0f);		
 						gScene->addActor(*box2);
+*/
 	}
 }
 
@@ -311,7 +373,7 @@ PxVec3 Langevin(PxVec3 LinVel,float sigma,float friction)
 	float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 	float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 	float r3 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-
+	//cout<<r1<<"_r1_"<<r2<<"_r2_"<<r3<<"_r3_"<<"\n";
 	float argfx=2.*sigma*(.5-r1)-friction*LinVel[0];
 	float argfy=2.*sigma*(.5-r2)-friction*LinVel[1];
 	float argfz=2.*sigma*(.5-r3)-friction*LinVel[2];
@@ -338,19 +400,18 @@ void countActor(void)
 
 	//arrayofBodies[1]->addForce(PxVec3(0,800,0),PxForceMode::eACCELERATION);
 
+	PxVec3 LinVelB=arrayofBodies[0]->getLinearVelocity();
+	//cout<<LinVelB[0]<<"_"<<LinVelB[1]<<"_"<<LinVelB[2]<<"velocity of body 0"<<"\n";
+
 	while(nbActors--)
 	{
-		//int fx=rand()%50;
-		//int fy=rand()%50;
-		//int fz=rand()%50;
-		
-		//cout<<fx<<"_"<<fy<<"_"<<fz<<"\n";
-		//arrayofBodies[nbActors];
 		PxVec3 LinVel=arrayofBodies[nbActors]->getLinearVelocity();
-		//cout<<LinVel[0]<<"_"<<LinVel[1]<<""<<LinVel[2]<<"\n";
 		PxVec3 LForce=Langevin(LinVel,sigma,friction);
-		//cout<<LForce[0]<<"_"<<LForce[1]<<""<<LForce[2]<<"\n";
+		PxMat44 matBody=arrayofBodies[nbActors]->getGlobalPose();
+		PxVec3 Lpos = matBody.getPosition();
+		PxVec3 BMass=arrayofBodies[nbActors]->getMassSpaceInertiaTensor();
 		arrayofBodies[nbActors]->addForce(LForce,PxForceMode::eIMPULSE);
+		//cout<<LForce[0]<<"_"<<LForce[1]<<"_"<<LForce[2]<<"_masse"<<BMass[0]<<"_"<<BMass[1]<<"_"<<BMass[2]<<"\n";
 		
 	}
 }
@@ -382,9 +443,14 @@ void OnRender()
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
 	
-	glTranslatef(0,0,gCamDistance);
+	glTranslatef(-100,0,gCamDistance);
 	glRotatef(gCamRoateX,1,0,0);
 	glRotatef(gCamRoateY,0,1,0);
+	/*gluLookAt(
+		0,0,0,
+		0,0,0,
+		1,0,0
+		);*/
 	
 	RenderData(gScene->getRenderBuffer());
 
