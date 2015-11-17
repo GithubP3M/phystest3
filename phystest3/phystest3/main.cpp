@@ -29,7 +29,8 @@ Description			: This example demonstrates how to use simulation event callbacks 
 #include <PxPhysicsAPI.h> //Single header file to include all features of PhysX API
 #include <GL/freeglut.h>  //OpenGL window tool kit 
 #include <vector>
-#include <math.h>
+//#include <math.h>
+#include <cmath>
 
 
 #include "RenderBuffer.h"	  //Used for rendering PhysX objetcs 
@@ -193,6 +194,7 @@ void InitPhysX()
 	cout<<"mass "<<Ma<<"\n";
 	cout<<"friction "<<friction<<"\n";
 	cout<<"dt "<<TempsFriction<<"\n";
+	cout<<"PhysX Version"<<PX_PHYSICS_VERSION<<"\n";
 	
 	//Creating foundation for PhysX
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
@@ -216,6 +218,7 @@ void InitPhysX()
 	sceneDesc.gravity		= PxVec3(0.0f, 0.0f, 0.0f);			//Setting gravity
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(1);		//Creates default CPU dispatcher for the scene
 
+	
 	/*//testing GPU dispatcher
 	PxProfileZoneManager* profileZoneManager = &PxProfileZoneManager::createProfileZoneManager(gFoundation);
 	PxCudaContextManagerDesc cudaContextManagerDesc;
@@ -223,8 +226,9 @@ void InitPhysX()
 
 	sceneDesc.gpuDispatcher = cudaContextManager->getGpuDispatcher();
 	
-	//testing GPU dispatcher */
+	*///testing GPU dispatcher
 	
+
 	sceneDesc.filterShader  = customFilterShader;					//Creates custom user collision filter shader for the scene
 	sceneDesc.simulationEventCallback = &gSimulationEventCallback;  //Resgistering for receiving simulation events
 	
@@ -278,7 +282,7 @@ void InitPhysX()
 
 		
 	{	
-		int numberofblocks=100;
+		int numberofblocks=1000;
 		//PxVec3 offset = PxVec3(0,0,-1);
 
 		PxReal radius=1;
@@ -291,7 +295,7 @@ void InitPhysX()
 
 		PxTransform		boxPos1(initpos,PxQuat(PxHalfPi, PxVec3(0.0f, 1.0f, 0.0f)));	//Position and orientation(transform) for box actor 
 		PxRigidDynamic	*gBoxOri = NULL;				//Instance of box actor 
-		PxCapsuleGeometry	sphereGeometry(2*radius,0.5*height);											//Defining geometry for box actor
+		PxCapsuleGeometry	sphereGeometry(4*radius,0.5*height);											//Defining geometry for box actor
 		gBoxOri = PxCreateDynamic(*gPhysicsSDK, boxPos1, sphereGeometry, *material, 1.0f);		//Creating rigid static actor
 		gBoxOri->setMass(Ma);
 		gScene->addActor(*gBoxOri);														//Adding box actor to PhysX scene
@@ -330,7 +334,7 @@ void InitPhysX()
 				cout<<i<<"\n";
 				PxTransform		boxPos1(initpos+PxVec3(0.0f, 0.0f, 2*i*height/*2.0f*/),PxQuat(PxHalfPi, PxVec3(0.0f, 1.0f, 0.0f)));												//Position and orientation(transform) for box actor 
 				PxRigidDynamic	*gBox = NULL;				//Instance of box actor 
-				PxCapsuleGeometry	sphereGeometry(2*radius,0.5*height);											//Defining geometry for box actor
+				PxCapsuleGeometry	sphereGeometry(4*radius,0.5*height);											//Defining geometry for box actor
 								gBox = PxCreateDynamic(*gPhysicsSDK, boxPos1, sphereGeometry, *material, 1.0f);		//Creating rigid static actor
 								gBox->setMass(Ma);
 								gScene->addActor(*gBox);														//Adding box actor to PhysX scene

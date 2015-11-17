@@ -1,23 +1,23 @@
-﻿La génération a démarré 04/11/2015 16:14:17.
+﻿La génération a démarré 17/11/2015 11:29:57.
      1>Projet "G:\Hua\toto\phystest3\phystest3\phystest3\phystest3.vcxproj" sur le nœud 2 (build cible(s)).
      1>InitializeBuildStatus:
          Création de "Debug\phystest3.unsuccessfulbuild", car "AlwaysCreate" a été spécifié.
        ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(113): warning C4244: 'initialisation' : conversion de 'double' en 'physx::PxReal', perte possible de données
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(294): warning C4244: 'argument' : conversion de 'double' en 'physx::PxReal', perte possible de données
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(300): warning C4018: '<' : incompatibilité signed/unsigned
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(302): warning C4018: '<' : incompatibilité signed/unsigned
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(329): warning C4018: '>=' : incompatibilité signed/unsigned
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(333): warning C4244: 'argument' : conversion de 'double' en 'physx::PxReal', perte possible de données
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(377): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(378): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(379): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(409): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
-     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(409): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(114): warning C4244: 'initialisation' : conversion de 'double' en 'physx::PxReal', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(298): warning C4244: 'argument' : conversion de 'double' en 'physx::PxReal', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(304): warning C4018: '<' : incompatibilité signed/unsigned
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(306): warning C4018: '<' : incompatibilité signed/unsigned
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(333): warning C4018: '>=' : incompatibilité signed/unsigned
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(337): warning C4244: 'argument' : conversion de 'double' en 'physx::PxReal', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(381): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(382): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(383): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(413): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>g:\hua\toto\phystest3\phystest3\phystest3\main.cpp(413): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"G:\Hua\toto\phystest3\phystest3\Debug\phystest3.exe" /NOLOGO PhysX3Extensions.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\phystest3.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"G:\Hua\toto\phystest3\phystest3\Debug\phystest3.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"G:\Hua\toto\phystest3\phystest3\Debug\phystest3.lib" /MACHINE:X86 Debug\main.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"G:\Hua\toto\phystest3\phystest3\Debug\phystest3.exe" /NOLOGO PhysX3Extensions.lib PhysX3ExtensionsDEBUG.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\phystest3.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"G:\Hua\toto\phystest3\phystest3\Debug\phystest3.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"G:\Hua\toto\phystest3\phystest3\Debug\phystest3.lib" /MACHINE:X86 Debug\main.obj
          LINK : G:\Hua\toto\phystest3\phystest3\Debug\phystest3.exe introuvable ou non généré par la dernière édition de liens incrémentielle ; édition de liens complète en cours
      1>LINK : warning LNK4098: conflit entre la bibliothèque par défaut 'LIBCMT' et les autres bibliothèques ; utilisez /NODEFAULTLIB:library
      1>PhysX3Extensions.lib(ExtCpuWorkerThread.obj) : warning LNK4099: PDB 'physx3extensions.pdb' n'a pu être trouvé avec 'PhysX3Extensions.lib(ExtCpuWorkerThread.obj)' ou sur 'G:\Hua\toto\phystest3\phystest3\Debug\physx3extensions.pdb' ; l'objet sera lié sans informations de débogage
@@ -38,4 +38,4 @@
 
 La génération a réussi.
 
-Temps écoulé 00:00:02.92
+Temps écoulé 00:00:03.42
